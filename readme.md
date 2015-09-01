@@ -26,7 +26,7 @@ The serializer has two configuration options:
 <?php
 use Phapi\Middleware\Serializer\Jsonp\Jsonp;
 
-$pipeline->pipe(new Xml($callbackHeader = 'X-Callback', ['text/html']));
+$pipeline->pipe(new Jsonp($callbackHeader = 'X-Callback', ['text/html']));
 ```
 
 Note that the array with additional mime types passed to the constructor will be merged with the default settings.
