@@ -1,0 +1,39 @@
+{
+  "name": "phapi/serializer-jsonp",
+  "description": "Phapi JSONP Serializer is a middleware based serializer that converts arrays to JSON and adds the provided (validated) callback method name.",
+  "keywords": [
+    "middleware", "serializer", "jsonp", "phapi"
+  ],
+  "version": "1.0.0",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "homepage": "http://phapi.github.io",
+  "authors": [
+    {
+      "name": "Peter Ahinko",
+      "email": "peter@ahinko.se",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.0",
+    "phapi/contract": "1.*",
+    "phapi/exception": "1.*",
+    "phapi/serializer": "1.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.*",
+    "mockery/mockery": "0.9.*",
+    "codeclimate/php-test-reporter": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "Phapi\\Middleware\\Serializer\\Jsonp\\": "src/Phapi/Middleware/Serializer/Jsonp/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Phapi\\Tests\\Middleware\\Serializer\\Jsonp\\": "tests/Phapi/Middleware/Serializer/Jsonp/"
+    }
+  }
+}
