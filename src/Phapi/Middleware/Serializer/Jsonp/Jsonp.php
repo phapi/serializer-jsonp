@@ -6,6 +6,7 @@ use Phapi\Exception\InternalServerError;
 use Phapi\Serializer\Serializer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Stream;
 
 /**
  * Class Json
@@ -96,6 +97,18 @@ class Jsonp extends Serializer
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
     {
+        $response = $next($request, $response, $next);
+
+        // Get response content type
+        $contentType = $this->getContentType($response);
+
+        // Check if the accept header matches this serializers mime types
+        if (!in_array($contentType, $this->mimeTypes)) {
+            // This serializer does not handle this mime type so there is nothing
+            // left to do. Return response.
+            return $response;
+        }
+
         // Get callback function name from request header or query string
         if ($request->hasHeader($this->callbackHeader)) {
             $this->callback = $request->getHeaderLine($this->callbackHeader);
@@ -118,19 +131,32 @@ class Jsonp extends Serializer
                 throw new \RuntimeException('Serializer could not retrieve unserialized body');
             }
 
-            // Add HTTP status code to body if not already set
-            if (!isset($unserializedBody['HttpStatus'])) {
-                $unserializedBody['HttpStatus'] = $status;
+            // Check if the body is an array and not empty
+            if (is_array($unserializedBody) && !empty($unserializedBody)) {
+                // Add HTTP status code to body if not already set
+                if (!isset($unserializedBody['HttpStatus'])) {
+                    $unserializedBody['HttpStatus'] = $status;
+                }
+
+                // Change response status code to 200
+                $response = $response->withStatus(200);
+
+                // Set the unserialized body to response
+                $response = $response->withUnserializedBody($unserializedBody);
+
+                // Try and encode the array to json
+                $json = $this->serialize($unserializedBody);
+
+                // Create a new body with the serialized content
+                $body = new Stream('php://memory', 'w+');
+                $body->write($json);
+
+                // Add the body to the response
+                $response = $response->withBody($body);
             }
-
-            // Change response status code to 200
-            $response = $response->withStatus(200);
-
-            // Set the unserialized body to response
-            $response = $response->withUnserializedBody($unserializedBody);
         }
 
-        return parent::__invoke($request, $response, $next);
+        return $response;
     }
 
     /**
