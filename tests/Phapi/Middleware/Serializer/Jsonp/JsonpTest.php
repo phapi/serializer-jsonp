@@ -164,16 +164,15 @@ class JsonpTest extends TestCase {
         $serializer($request, $response, $next);
     }
     
-        public function testNoContentType()
+    public function testNoContentType()
     {
         // Serializer
-        $serializer = \Mockery::mock('Phapi\Serializer\Serializer[serialize]', [['application/json', 'text/json']]);
-        $serializer->shouldReceive('serialize')->with(['username' => 'phapi'])->andReturn("{ 'username': 'phapi' }");
+        $serializer = new Jsonp();
 
         // Container
         $container = \Mockery::mock('Phapi\Contract\Di\Container');
         $container->shouldReceive('offsetGet')->with('acceptTypes')->andReturn([]);
-        $container->shouldReceive('offsetSet')->with('acceptTypes', ['application/json', 'text/json']);
+        $container->shouldReceive('offsetSet')->with('acceptTypes', ['application/javascript', 'text/javascript']);
         $serializer->setContainer($container);
 
         $serializer->registerMimeTypes();
