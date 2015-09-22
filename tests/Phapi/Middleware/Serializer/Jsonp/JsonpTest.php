@@ -182,8 +182,8 @@ class JsonpTest extends TestCase {
         $request = \Mockery::mock('Psr\Http\Message\ServerRequestInterface');
 
         $response = \Mockery::mock('Psr\Http\Message\ResponseInterface');
-        $response->shouldReceive('hasHeader')->with('Content-Type')->andReturn(false);
-        //$response->shouldReceive('getHeaderLine')->with('Content-Type')->andReturn('application/json');
+        $response->shouldReceive('hasHeader')->with('Content-Type')->andReturn(true);
+        $response->shouldReceive('getHeaderLine')->with('Content-Type')->andReturn('application/xml');
         //$response->shouldReceive('getUnserializedBody')->andReturn([ 'username' => 'phapi' ]);
         //$response->shouldReceive('withBody')->with(\Mockery::type('Psr\Http\Message\StreamInterface'))->andReturnSelf();
 
